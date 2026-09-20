@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Discord Services</title>
+<meta name="description" content="Professional Discord server setup, reworks, bots and custom systems.">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--bg:#07090f;--panel:#0d111b;--panel2:#111725;--text:#f5f7fb;--muted:#9ba5b7;--line:#20283a;--accent:#7c5cff;--accent2:#25d9ff;--good:#36e08b;--shadow:0 20px 70px #0008}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 20% 0%,#24185b55,transparent 32%),radial-gradient(circle at 90% 20%,#0b8ca533,transparent 28%),var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;background-image:linear-gradient(#ffffff03 1px,transparent 1px),linear-gradient(90deg,#ffffff03 1px,transparent 1px);background-size:45px 45px;mask-image:linear-gradient(to bottom,#000,transparent 85%);z-index:-1}
+a{text-decoration:none;color:inherit}button,input,textarea,select{font:inherit}button{cursor:pointer}
+.container{width:min(1180px,92%);margin:auto}.nav{height:76px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #ffffff08;position:sticky;top:0;backdrop-filter:blur(18px);background:#07090fcc;z-index:20}.brand{font-weight:900;letter-spacing:.5px;font-size:19px}.brand span{color:var(--accent2)}.navlinks{display:flex;gap:22px;color:var(--muted);font-size:14px}.navlinks a:hover{color:white}.admin-btn,.primary,.secondary{border:1px solid #ffffff12;border-radius:12px;padding:11px 16px;color:#fff;background:#ffffff08;transition:.25s}.admin-btn:hover,.secondary:hover{background:#ffffff12;transform:translateY(-2px)}.primary{background:linear-gradient(135deg,var(--accent),#4e8cff);border:0;font-weight:800;box-shadow:0 10px 35px #5d4cff33}.primary:hover{transform:translateY(-2px);filter:brightness(1.08)}
+.hero{padding:110px 0 80px;text-align:center}.badge{display:inline-flex;padding:8px 12px;border:1px solid #ffffff12;border-radius:999px;background:#ffffff06;color:#cbd2df;font-size:13px}.hero h1{font-size:clamp(42px,7vw,82px);line-height:.95;margin:24px 0 20px;letter-spacing:-4px}.gradient{background:linear-gradient(100deg,#fff,var(--accent2),#a98cff);-webkit-background-clip:text;background-clip:text;color:transparent}.hero p{max-width:700px;margin:auto;color:var(--muted);font-size:17px;line-height:1.7}.actions{display:flex;justify-content:center;gap:12px;margin-top:30px;flex-wrap:wrap}.status{margin:22px auto 0;color:#9fe9bf;font-size:13px}
+.section{padding:75px 0}.section-head{text-align:center;margin-bottom:35px}.eyebrow{color:var(--accent2);font-size:12px;text-transform:uppercase;letter-spacing:2px;font-weight:800}.section h2{font-size:38px;margin:10px 0}.section-head p{color:var(--muted)}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.card{background:linear-gradient(180deg,#ffffff07,#ffffff03);border:1px solid var(--line);border-radius:20px;padding:25px;box-shadow:var(--shadow);transition:.3s}.card:hover{transform:translateY(-6px);border-color:#ffffff20}.package{position:relative;overflow:hidden}.package:after{content:"";position:absolute;width:150px;height:150px;border-radius:50%;background:#7c5cff22;filter:blur(40px);right:-70px;top:-70px}.package h3{margin:8px 0;font-size:25px}.price{font-size:31px;font-weight:900;margin:15px 0}.muted{color:var(--muted)}.feature{display:flex;gap:9px;margin:11px 0;color:#d6dbe5;font-size:14px}.feature b{color:var(--good)}.clickable{cursor:pointer}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.stat{text-align:center;padding:24px}.stat strong{display:block;font-size:30px}.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}.stepnum{font-size:13px;color:var(--accent2);font-weight:900}.faq{border-bottom:1px solid var(--line);padding:18px 0}.faq summary{cursor:pointer;font-weight:700}.faq p{color:var(--muted);line-height:1.7}.cta{padding:45px;text-align:center;border:1px solid #ffffff12;border-radius:25px;background:linear-gradient(135deg,#7c5cff18,#25d9ff08)}footer{padding:35px 0;color:var(--muted);border-top:1px solid #ffffff0a;font-size:13px}.footerrow{display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap}
+.modal{position:fixed;inset:0;background:#000b;backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;padding:20px;z-index:100}.modal.open{display:flex;animation:fade .2s}.modalbox{width:min(760px,100%);max-height:90vh;overflow:auto;background:#0b1019;border:1px solid #ffffff16;border-radius:22px;box-shadow:0 30px 100px #000;animation:pop .25s}.modalhead{display:flex;justify-content:space-between;gap:15px;align-items:center;padding:22px;border-bottom:1px solid var(--line);position:sticky;top:0;background:#0b1019ee;backdrop-filter:blur(10px);z-index:2}.close{border:0;background:#ffffff08;color:white;border-radius:10px;width:38px;height:38px}.modalbody{padding:22px}.detailgrid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.list{padding-left:18px;color:#cbd2df;line-height:1.9}.form{display:grid;gap:12px}.form label{font-size:12px;color:#9ba5b7}.form input,.form textarea,.form select{width:100%;background:#070b12;border:1px solid #263044;color:white;border-radius:11px;padding:11px 12px;outline:none}.form textarea{min-height:95px;resize:vertical}.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.error{background:#ff4d4d14;border:1px solid #ff4d4d55;color:#ff9d9d;padding:10px;border-radius:10px;font-size:13px;display:none}.toast{position:fixed;right:20px;bottom:20px;background:#111927;border:1px solid #ffffff18;padding:13px 16px;border-radius:12px;box-shadow:var(--shadow);display:none;z-index:200}.admin-tabs{display:flex;gap:8px;overflow:auto;margin-bottom:18px}.admin-tab{white-space:nowrap;border:1px solid #ffffff10;background:#ffffff05;color:#aab3c3;border-radius:10px;padding:9px 12px}.admin-tab.active{background:#7c5cff22;color:white;border-color:#7c5cff66}.admin-section{display:none}.admin-section.active{display:block}.editor-card{border:1px solid var(--line);border-radius:16px;padding:18px;background:#ffffff03;margin-bottom:15px}.editor-card h4{margin:0 0 14px}.small{font-size:12px;color:var(--muted)}.admin-list{display:grid;gap:10px}.admin-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;border:1px solid var(--line);border-radius:12px;background:#ffffff03}.role{font-size:11px;padding:4px 8px;border-radius:999px;background:#7c5cff22;color:#cfc6ff}.danger{background:#ff4d4d12;border:1px solid #ff4d4d44;color:#ff9c9c;border-radius:9px;padding:8px 11px}.preview{border:1px dashed #ffffff20;border-radius:13px;padding:13px;margin-top:10px;color:#cbd2df}
+@keyframes fade{from{opacity:0}to{opacity:1}}@keyframes pop{from{opacity:0;transform:translateY(15px) scale(.98)}to{opacity:1;transform:none}}
+@media(max-width:800px){.grid3,.stats,.steps{grid-template-columns:1fr}.navlinks{display:none}.hero{padding:80px 0 55px}.hero h1{letter-spacing:-2px}.detailgrid,.row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="nav">
+<div class="container" style="display:flex;align-items:center;justify-content:space-between;width:100%">
+<div class="brand">DISCORD <span>SERVICES</span></div>
+<div class="navlinks"><a href="#services">Services</a><a href="#packages">Packages</a><a href="#process">Process</a><a href="#faq">FAQ</a></div>
+<button class="admin-btn" onclick="openLogin()">Admin</button>
+</div>
+</nav>
+
+<header class="hero">
+<div class="container">
+<div class="badge">Professional Discord Setup • Reworks • Custom Systems</div>
+<h1>Build a Discord server<br><span class="gradient">that actually works.</span></h1>
+<p id="announcement">Professional Discord server setup, reworks and custom systems.</p>
+<div class="actions"><a class="primary" href="#packages">View Packages</a><button class="secondary" onclick="openOrder()">Place an Order</button></div>
+<div class="status">● <span id="serviceStatus">OPEN</span></div>
+</div>
+</header>
+
+<section class="section" id="services"><div class="container"><div class="section-head"><div class="eyebrow">What we do</div><h2>Discord systems, built properly.</h2><p>From a clean server setup to a complete custom rework.</p></div>
+<div class="grid3"><div class="card"><h3>Server Design</h3><p class="muted">Categories, channels, roles, permissions and professional structure.</p></div><div class="card"><h3>Automation</h3><p class="muted">Tickets, moderation, applications, webhooks and utility systems.</p></div><div class="card"><h3>Custom Systems</h3><p class="muted">Custom workflows and special requirements for your community.</p></div></div></div></section>
+
+<section class="section" id="packages"><div class="container"><div class="section-head"><div class="eyebrow">Packages</div><h2>Choose your level.</h2><p>Click a package to see the full details.</p></div><div class="grid3" id="packageGrid"></div></div></section>
+
+<section class="section"><div class="container"><div class="stats"><div class="card stat"><strong id="projects">0+</strong><span class="muted">Projects</span></div><div class="card stat"><strong id="clients">0+</strong><span class="muted">Clients</span></div><div class="card stat"><strong id="systems">0+</strong><span class="muted">Systems</span></div><div class="card stat"><strong id="rating">—</strong><span class="muted">Rating</span></div></div></div></section>
+
+<section class="section" id="process"><div class="container"><div class="section-head"><div class="eyebrow">How it works</div><h2>Simple process.</h2></div><div class="steps"><div class="card"><div class="stepnum">01</div><h3>Discuss</h3><p class="muted">Tell us what your server needs.</p></div><div class="card"><div class="stepnum">02</div><h3>Plan</h3><p class="muted">We agree on the package and requirements.</p></div><div class="card"><div class="stepnum">03</div><h3>Build</h3><p class="muted">The server is configured and tested.</p></div><div class="card"><div class="stepnum">04</div><h3>Handover</h3><p class="muted">You receive the completed setup.</p></div></div></div></section>
+
+<section class="section" id="faq"><div class="container"><div class="section-head"><div class="eyebrow">FAQ</div><h2>Questions.</h2></div>
+<details class="faq"><summary>How do payments work?</summary><p>Prices are based on Blox Fruits Values. Exact fruits are negotiable as long as the agreed value is met.</p></details>
+<details class="faq"><summary>How do I order?</summary><p>Join the service Discord and create a ticket. The requirements and final price can be discussed there.</p></details>
+<details class="faq"><summary>Can I request custom features?</summary><p>Yes. Custom requirements can be discussed before the order is accepted.</p></details>
+</div></section>
+
+<section class="section"><div class="container"><div class="cta"><div class="eyebrow">Ready?</div><h2>Start your server rework.</h2><p class="muted">Join the Discord and open a ticket.</p><button class="primary" onclick="openOrder()">Place an Order</button></div></div></section>
+<footer><div class="container footerrow"><span>© <span id="year"></span> Discord Services</span><span>Prices are based on Blox Fruits Values.</span></div></footer>
+
+<div class="modal" id="packageModal" onclick="outsideClose(event,'packageModal')"><div class="modalbox"><div class="modalhead"><div><div class="eyebrow" id="detailEyebrow"></div><h2 id="detailTitle" style="margin:5px 0"></h2></div><button class="close" onclick="closeModal('packageModal')">×</button></div><div class="modalbody" id="detailBody"></div></div></div>
+
+<div class="modal" id="orderModal" onclick="outsideClose(event,'orderModal')"><div class="modalbox"><div class="modalhead"><h2>Place an Order</h2><button class="close" onclick="closeModal('orderModal')">×</button></div><div class="modalbody"><p class="muted">Join the service Discord and create a ticket. Tell the staff which package you want and your requirements.</p><a id="orderLink" class="primary" style="display:inline-block;margin-top:10px" target="_blank" rel="noopener">Join Service Discord</a></div></div></div>
+
+<div class="modal" id="loginModal" onclick="outsideClose(event,'loginModal')"><div class="modalbox" style="max-width:440px"><div class="modalhead"><h2>Admin Login</h2><button class="close" onclick="closeModal('loginModal')">×</button></div><div class="modalbody"><div class="form"><label>Email</label><input id="loginEmail" type="email" autocomplete="username"><label>Password</label><input id="loginPassword" type="password" autocomplete="current-password"><div class="error" id="loginError"></div><button class="primary" onclick="adminLogin()">Login</button></div></div></div></div>
+
+<div class="modal" id="adminModal" onclick="outsideClose(event,'adminModal')"><div class="modalbox"><div class="modalhead"><div><div class="eyebrow">Control Panel</div><h2 style="margin:5px 0">Admin</h2><div class="small" id="adminIdentity"></div></div><button class="close" onclick="closeAdmin()">×</button></div><div class="modalbody"><div class="admin-tabs" id="adminTabs">
+<button class="admin-tab active" onclick="switchAdminTab('general',this)">General</button>
+<button class="admin-tab" onclick="switchAdminTab('basic',this)">🟢 Basic</button>
+<button class="admin-tab" onclick="switchAdminTab('advanced',this)">🔵 Advanced</button>
+<button class="admin-tab" onclick="switchAdminTab('full',this)">👑 Full</button>
+</div>
+<section class="admin-section active" id="admin-general"></section>
+<section class="admin-section" id="admin-basic"></section>
+<section class="admin-section" id="admin-advanced"></section>
+<section class="admin-section" id="admin-full"></section>
+<section class="admin-section" id="admin-team"></section>
+</div></div></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPABASE_URL="https://xfpcsqtiferkjnrhqiad.supabase.co";
+const SUPABASE_KEY="sb_publishable_Bo405Z3J6R6cDpAbhuc8BA_aJNX1CoH";
+const supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+const defaults={
+basic:{slug:"basic",name:"BASIC",icon:"🟢",price:"10M",short_description:"Clean server setup, channels, roles and basic bot configuration.",long_description:"A solid starting package for a clean and organized Discord server.",features:["Server structure","Channels and categories","Basic roles and permissions","Basic formatting","Basic bot setup"],systems:["Basic moderation","Utility bots","Permission setup"],process:["Requirement check","Setup","Testing","Handover"],notes:["10M Blox Fruits value","Exact fruits are negotiable","Create a ticket to order","Custom requirements can be discussed"],vouches:[]},
+advanced:{slug:"advanced",name:"ADVANCED",icon:"🔵",price:"25M",short_description:"Professional rework, advanced permissions, tickets and applications.",long_description:"A complete professional rework for communities that need more systems and structure.",features:["Everything in Basic","Professional layout","Advanced roles and permissions","Multiple bot systems","Ticket system","Staff applications","Full server rework"],systems:["Advanced moderation","Tickets","Staff applications","Role architecture","Utility automation"],process:["Requirement discussion","Server review","Rework","Testing","Handover"],notes:["25M Blox Fruits value","Exact fruits are negotiable","Create a ticket to order","Custom requirements can be discussed"],vouches:[]},
+full:{slug:"full",name:"FULL",icon:"👑",price:"50M+",short_description:"Fully custom server systems, automation, webhooks and priority service.",long_description:"A full custom build for communities that need advanced systems and special requirements.",features:["Everything in Advanced","Fully custom structure/design","Advanced automation","Custom systems","Custom webhooks/embeds","Advanced staff architecture","Special requirements","Priority service"],systems:["Custom automation","Advanced tickets","Webhooks","Embeds","Staff hierarchy","Custom workflows"],process:["Detailed discussion","Planning","Development","Testing","Deployment","Priority handover"],notes:["50M+ Blox Fruits value","Exact fruits are negotiable","Create a ticket to order","Custom requirements can be discussed"],vouches:[]}
+};
+let packages=JSON.parse(JSON.stringify(defaults));
+let siteSettings={discord_invite:"https://discord.gg/EPzK4n74e8",youtube:"#",instagram:"#",tiktok:"#",announcement:"Professional Discord server setup, reworks and custom systems.",service_status:"OPEN",projects:"0+",clients:"0+",systems:"0+",rating:"—"};
+let currentAdmin=null;
+
+const $=id=>document.getElementById(id);
+function esc(v=""){return String(v).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function arr(v){return Array.isArray(v)?v:[]}
+function listHTML(a){return arr(a).map(x=>`<li>${esc(x)}</li>`).join("")}
+function showToast(msg){$("toast").textContent=msg;$("toast").style.display="block";clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>$("toast").style.display="none",2500)}
+function openModal(id){$(id).classList.add("open")}
+function closeModal(id){$(id).classList.remove("open")}
+function outsideClose(e,id){if(e.target.id===id)closeModal(id)}
+
+function renderPackages(){
+ $("packageGrid").innerHTML=Object.values(packages).map(p=>`<div class="card package clickable" onclick="openPackage('${p.slug}')"><div style="font-size:28px">${esc(p.icon)}</div><h3>${esc(p.name)}</h3><div class="price">${esc(p.price)}</div><p class="muted">${esc(p.short_description)}</p><div class="feature"><b>✓</b> View full package details</div></div>`).join("");
+}
+function openPackage(slug){
+ const p=packages[slug];if(!p)return;
+ $("detailEyebrow").textContent=`${p.icon} ${p.price}`;
+ $("detailTitle").textContent=p.name;
+ $("detailBody").innerHTML=`<p class="muted">${esc(p.long_description)}</p><div class="detailgrid">
+<div><h3>Included</h3><ul class="list">${listHTML(p.features)}</ul></div>
+<div><h3>Systems</h3><ul class="list">${listHTML(p.systems)}</ul></div>
+<div><h3>Process</h3><ul class="list">${listHTML(p.process)}</ul></div>
+<div><h3>Notes</h3><ul class="list">${listHTML(p.notes)}</ul></div></div>
+<div style="margin-top:18px"><h3>Vouches</h3>${p.vouches.length?p.vouches.map(v=>`<div class="preview">${esc(v)}</div>`).join(""):'<div class="preview">No vouches added yet. Genuine feedback will appear here.</div>'}</div>
+<button class="primary" style="margin-top:20px" onclick="closeModal('packageModal');openOrder('${p.slug}')">Order ${esc(p.name)}</button>`;
+ openModal("packageModal");
+}
+function openOrder(){ $("orderLink").href=siteSettings.discord_invite; openModal("orderModal") }
+
+function applySettings(){
+ $("announcement").textContent=siteSettings.announcement;
+ $("serviceStatus").textContent=siteSettings.service_status;
+ $("projects").textContent=siteSettings.projects;
+ $("clients").textContent=siteSettings.clients;
+ $("systems").textContent=siteSettings.systems;
+ $("rating").textContent=siteSettings.rating;
+ $("orderLink").href=siteSettings.discord_invite;
+ $("year").textContent=new Date().getFullYear();
+}
+async function loadPublic(){
+ try{
+  const s=await supabaseClient.from("site_settings").select("*").eq("id",1).maybeSingle();
+  if(s.data)siteSettings={...siteSettings,...s.data};
+  const p=await supabaseClient.from("package_details").select("*");
+  if(p.data&&p.data.length) p.data.forEach(x=>packages[x.slug]={...packages[x.slug],...x});
+ }catch(e){console.warn(e)}
+ applySettings();renderPackages();
+}
+
+function openLogin(){openModal("loginModal")}
+async function adminLogin(){
+ const email=$("loginEmail").value.trim(),password=$("loginPassword").value,errorBox=$("loginError");
+ errorBox.style.display="none";
+ if(!email||!password){errorBox.textContent="Enter your email and password.";errorBox.style.display="block";return}
+ try{
+  const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});
+  if(error)throw error;
+  const r=await supabaseClient.from("admins").select("user_id,role").eq("user_id",data.user.id).maybeSingle();
+  if(r.error)throw r.error;
+  if(!r.data){await supabaseClient.auth.signOut();throw new Error("This account is authenticated but is not registered as an admin.")}
+  currentAdmin=r.data;
+  closeModal("loginModal");await openAdminPanel();showToast("Admin login successful.");
+ }catch(e){errorBox.textContent=e.message||"Login failed.";errorBox.style.display="block"}
+}
+async function closeAdmin(){await supabaseClient.auth.signOut();currentAdmin=null;closeModal("adminModal")}
+function switchAdminTab(name,btn){
+ document.querySelectorAll(".admin-tab").forEach(x=>x.classList.remove("active"));
+ document.querySelectorAll(".admin-section").forEach(x=>x.classList.remove("active"));
+ if(btn)btn.classList.add("active");$("admin-"+name).classList.add("active");
+ if(name==="team")loadTeam();
+}
+function ensureTeamTab(){
+ if(currentAdmin?.role!=="owner")return;
+ if(!$("teamTab")){
+  const b=document.createElement("button");b.id="teamTab";b.className="admin-tab";b.textContent="Admin Team";b.onclick=()=>switchAdminTab("team",b);$("adminTabs").appendChild(b);
+ }
+}
+function fillGeneralEditor(){
+ $("admin-general").innerHTML=`<div class="editor-card"><h4>General Website</h4><div class="form">
+<div class="row"><div><label>Discord Invite</label><input id="e_invite" value="${esc(siteSettings.discord_invite)}"></div><div><label>Service Status</label><input id="e_status" value="${esc(siteSettings.service_status)}"></div></div>
+<label>Announcement</label><textarea id="e_announcement">${esc(siteSettings.announcement)}</textarea>
+<div class="row"><div><label>Projects</label><input id="e_projects" value="${esc(siteSettings.projects)}"></div><div><label>Clients</label><input id="e_clients" value="${esc(siteSettings.clients)}"></div></div>
+<div class="row"><div><label>Systems</label><input id="e_systems" value="${esc(siteSettings.systems)}"></div><div><label>Rating</label><input id="e_rating" value="${esc(siteSettings.rating)}"></div></div>
+<label>YouTube</label><input id="e_youtube" value="${esc(siteSettings.youtube)}"><label>Instagram</label><input id="e_instagram" value="${esc(siteSettings.instagram)}"><label>TikTok</label><input id="e_tiktok" value="${esc(siteSettings.tiktok)}">
+<button class="primary" onclick="saveEverything()">Save Website</button></div></div>
+<div class="editor-card"><h4>Current account</h4><div class="small">Role: ${esc(currentAdmin?.role||"admin")}</div><div class="preview">${esc(currentAdmin?.user_id||"")}</div><button class="secondary" onclick="copyMyId()">Copy User ID</button><button class="danger" style="float:right" onclick="closeAdmin()">Logout</button></div>`;
+}
+function renderPackageEditor(slug){
+ const p=packages[slug],id="admin-"+slug;
+ $(id).innerHTML=`<div class="editor-card"><h4>${esc(p.icon)} ${esc(p.name)}</h4><div class="form">
+<div class="row"><div><label>Name</label><input id="${slug}_name" value="${esc(p.name)}"></div><div><label>Price</label><input id="${slug}_price" value="${esc(p.price)}"></div></div>
+<label>Icon</label><input id="${slug}_icon" value="${esc(p.icon)}"><label>Short description</label><textarea id="${slug}_short">${esc(p.short_description)}</textarea><label>Full description</label><textarea id="${slug}_long">${esc(p.long_description)}</textarea>
+<label>Features — one per line</label><textarea id="${slug}_features">${arr(p.features).join("\\n")}</textarea>
+<label>Systems — one per line</label><textarea id="${slug}_systems">${arr(p.systems).join("\\n")}</textarea>
+<label>Process — one per line</label><textarea id="${slug}_process">${arr(p.process).join("\\n")}</textarea>
+<label>Notes — one per line</label><textarea id="${slug}_notes">${arr(p.notes).join("\\n")}</textarea>
+<label>Vouches — one per line</label><textarea id="${slug}_vouches">${arr(p.vouches).join("\\n")}</textarea>
+<div class="preview"><b>Live preview:</b> ${esc(p.price)} — ${esc(p.short_description)}</div><button class="primary" onclick="saveEverything()">Save All Changes</button></div></div>`;
+}
+function readPackage(slug){
+ const p=packages[slug];
+ const val=id=>$(id).value;
+ const lines=id=>val(id).split("\\n").map(x=>x.trim()).filter(Boolean);
+ return {...p,name:val(slug+"_name").trim(),price:val(slug+"_price").trim(),icon:val(slug+"_icon").trim(),short_description:val(slug+"_short").trim(),long_description:val(slug+"_long").trim(),features:lines(slug+"_features"),systems:lines(slug+"_systems"),process:lines(slug+"_process"),notes:lines(slug+"_notes"),vouches:lines(slug+"_vouches")};
+}
+async function saveEverything(){
+ try{
+  siteSettings={...siteSettings,discord_invite:$("e_invite").value.trim(),service_status:$("e_status").value.trim(),announcement:$("e_announcement").value.trim(),projects:$("e_projects").value.trim(),clients:$("e_clients").value.trim(),systems:$("e_systems").value.trim(),rating:$("e_rating").value.trim(),youtube:$("e_youtube").value.trim(),instagram:$("e_instagram").value.trim(),tiktok:$("e_tiktok").value.trim()};
+  const s=await supabaseClient.from("site_settings").update({...siteSettings,updated_at:new Date().toISOString()}).eq("id",1);
+  if(s.error)throw s.error;
+  for(const slug of ["basic","advanced","full"]){
+   const p=readPackage(slug);packages[slug]=p;
+   const r=await supabaseClient.from("package_details").upsert(p,{onConflict:"slug"});if(r.error)throw r.error;
+  }
+  applySettings();renderPackages();fillGeneralEditor();["basic","advanced","full"].forEach(renderPackageEditor);showToast("All changes saved.");
+ }catch(e){console.error(e);showToast("Save failed: "+(e.message||"Unknown error"))}
+}
+async function openAdminPanel(){
+ if(!currentAdmin)return;
+ ensureTeamTab();fillGeneralEditor();["basic","advanced","full"].forEach(renderPackageEditor);
+ switchAdminTab("general",document.querySelector(".admin-tab"));$("adminIdentity").textContent=`${currentAdmin.role.toUpperCase()} • ${currentAdmin.user_id}`;
+ openModal("adminModal");
+}
+async function loadTeam(){
+ const box=$("admin-team");
+ if(currentAdmin?.role!=="owner"){box.innerHTML="";return}
+ box.innerHTML=`<div class="editor-card"><h4>Admin Management</h4><p class="small">Owner only. Add another Supabase Auth user's UUID as an admin. The owner cannot be removed.</p><div class="form"><label>User UUID</label><input id="newAdminId" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"><button class="primary" onclick="addAdmin()">Add Admin</button></div></div><div class="editor-card"><h4>Current Admins</h4><div id="adminList" class="admin-list">Loading...</div></div>`;
+ const r=await supabaseClient.from("admins").select("user_id,role").order("role",{ascending:true});if(r.error){$("adminList").textContent=r.error.message;return}
+ $("adminList").innerHTML=r.data.map(a=>`<div class="admin-item"><div><div>${esc(a.user_id)}</div><span class="role">${esc(a.role)}</span></div>${a.role==="owner"?'<span class="small">Owner protected</span>':`<button class="danger" onclick="removeAdmin('${a.user_id}')">Remove</button>`}</div>`).join("");
+}
+async function addAdmin(){
+ const id=$("newAdminId").value.trim();
+ if(!/^[0-9a-f]{8}-[0-9a-f-]{27,}$/i.test(id)){showToast("Enter a valid Supabase user UUID.");return}
+ const r=await supabaseClient.from("admins").insert({user_id:id,role:"admin"});
+ if(r.error){showToast(r.error.message);return}
+ $("newAdminId").value="";await loadTeam();showToast("Admin added.");
+}
+async function removeAdmin(id){
+ if(!confirm("Remove this admin?"))return;
+ const r=await supabaseClient.from("admins").delete().eq("user_id",id);
+ if(r.error){showToast(r.error.message);return}
+ await loadTeam();showToast("Admin removed.");
+}
+async function copyMyId(){try{await navigator.clipboard.writeText(currentAdmin.user_id);showToast("User ID copied.")}catch{showToast(currentAdmin.user_id)}}
+
+$("loginPassword").addEventListener("keydown",e=>{if(e.key==="Enter")adminLogin()});
+loadPublic();
+supabaseClient.auth.getSession().then(async({data})=>{
+ if(!data.session)return;
+ const r=await supabaseClient.from("admins").select("user_id,role").eq("user_id",data.session.user.id).maybeSingle();
+ if(r.data)currentAdmin=r.data;
+});
+</script>
+</body>
+</html>
